@@ -39,8 +39,7 @@ impl Renderer {
                 DrawableItem::Text { x, y, content } => { /* TODO */ },
                 DrawableItem::Sprite { x, y, id } => { /* TODO */ }
             }
-
-            self.canvas.present();
         }
+        self.canvas.present();
     }
 }
