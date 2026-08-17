@@ -3,6 +3,10 @@ name = "topi"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "topi"
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 mlua = { version = "0.9", features = ["lua54", "module"] }
 sdl2 = { version = "0.38.0", features = ["image"] }
