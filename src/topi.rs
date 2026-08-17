@@ -1,3 +1,5 @@
+use mlua::UserData;
+use mlua::prelude::*;
 use sdl2::{EventPump, Sdl, VideoSubsystem, render::TextureCreator, video::WindowContext};
 use assets::{Assets, AssetId};
 use renderer::Renderer;
@@ -6,7 +8,7 @@ mod text;
 mod assets;
 mod renderer;
 
-pub struct Topi {
+pub struct TopiEngine {
     sdl_context: Sdl,
     video_subsystem: VideoSubsystem,
     renderer: Renderer,
@@ -18,7 +20,7 @@ pub struct Topi {
     run: bool
 }
 
-impl Topi {
+impl TopiEngine {
     pub fn new(window_name: &str, window_width: u32, window_height: u32) -> Self {
         let sdl_context = sdl2::init().expect("Failed to load sdl2.");
         let video_subsystem = sdl_context.video().expect("Failed to load video subsystem.");
@@ -68,5 +70,14 @@ impl Topi {
 
     fn update(&mut self) {
         
+    }
+}
+
+impl UserData for TopiEngine {
+    fn add_methods<'lua, M: LuaUserDataMethods<'lua, Self>>(methods: &mut M) {
+        methods.add_method_mut("run", |_lua, this, ()| {
+            this.run();
+            Ok(())
+        });
     }
 }
