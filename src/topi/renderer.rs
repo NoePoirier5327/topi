@@ -33,7 +33,7 @@ impl Renderer {
             match item {
                 DrawableItem::Rect {x, y, w, h, color} => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
-                    self.canvas.fill_rect(sdl2::rect::Rect::new(x, y, w, h));
+                    let _ = self.canvas.fill_rect(sdl2::rect::Rect::new(x, y, w, h));
                 },
 
                 DrawableItem::Text { x, y, content } => { /* TODO */ },
