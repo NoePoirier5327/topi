@@ -1,13 +1,20 @@
+use sdl2::{EventPump, Sdl, VideoSubsystem, render::TextureCreator, video::WindowContext};
+use assets::{Assets, AssetId};
+use renderer::Renderer;
+
 mod text;
 mod assets;
 mod renderer;
 
 pub struct Topi {
-    sdl_context: sdl2::Sdl,
-    video_subsystem: sdl2::VideoSubsystem,
-    texture_creator: sdl2::render::TextureCreator<sdl2::video::WindowContext>,
-    event_pump: sdl2::EventPump,
-    renderer: renderer::Renderer,
+    sdl_context: Sdl,
+    video_subsystem: VideoSubsystem,
+    renderer: Renderer,
+
+    texture_creator: TextureCreator<WindowContext>,
+    assets: Assets,
+
+    event_pump: EventPump,
     run: bool
 }
 
@@ -24,11 +31,18 @@ impl Topi {
         Self {
             sdl_context,
             video_subsystem,
+            renderer: Renderer::new(canvas),
+
             texture_creator,
+            assets: Assets::new(),
+
             event_pump,
-            renderer: renderer::Renderer::new(canvas),
             run: true
         }
+    }
+
+    pub fn load_texture(&mut self, texture_path: &str, id: &AssetId) {
+        self.assets.load_texture(&self.texture_creator, texture_path, id);
     }
 
     pub fn get_renderer(&mut self) -> &renderer::Renderer {

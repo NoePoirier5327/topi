@@ -1,3 +1,5 @@
+use sdl2::{render::{Canvas, TextureCreator}, video::{Window, WindowContext}};
+
 pub enum DrawableItem {
     Sprite {x: i32, y: i32, id: usize},
     Rect {x: i32, y: i32, w: u32, h: u32, color: RGBColor},
@@ -13,14 +15,14 @@ pub struct RGBColor {
 
 pub struct Renderer {
     queue: Vec<DrawableItem>,
-    canvas: sdl2::render::Canvas<sdl2::video::Window>
+    canvas: Canvas<Window>,
 }
 
 impl Renderer {
     pub fn new(canvas: sdl2::render::Canvas<sdl2::video::Window>) -> Self {
         Self {
             queue: Vec::new(),
-            canvas
+            canvas,
         }
     }
 
