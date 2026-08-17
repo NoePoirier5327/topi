@@ -2,12 +2,12 @@ mod text;
 mod assets;
 mod renderer;
 
-struct Topi {
+pub struct Topi {
     sdl_context: sdl2::Sdl,
     video_subsystem: sdl2::VideoSubsystem,
     texture_creator: sdl2::render::TextureCreator<sdl2::video::WindowContext>,
     event_pump: sdl2::EventPump,
-    render: renderer::Renderer,
+    renderer: renderer::Renderer,
     run: bool
 }
 
@@ -26,28 +26,33 @@ impl Topi {
             video_subsystem,
             texture_creator,
             event_pump,
-            render: renderer::Renderer::new(canvas),
+            renderer: renderer::Renderer::new(canvas),
             run: true
         }
+    }
+
+    pub fn get_renderer(&mut self) -> &renderer::Renderer {
+        &self.renderer
     }
 
     pub fn run(&mut self) {
         while self.run {
             self.event_handler();
             self.update();
-            self.display();
+            self.renderer.flush();
         }
     }
 
     fn event_handler(&mut self) {
-        
+        for event in self.event_pump.poll_iter() {
+            match event {
+                sdl2::event::Event::Quit { .. } => { self.run = false; },
+                _ => {  }
+            }
+        }
     }
 
     fn update(&mut self) {
-
-    }
-
-    fn display(&self) {
-
+        
     }
 }
