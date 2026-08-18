@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use mlua::{
     Function, 
     Lua,
@@ -9,14 +11,17 @@ use mlua::{
     Error as LuaError
 };
 
+use super::renderer::Renderer;
+
 pub enum Command {
-    AnonymeTask(RegistryKey)
+    AnonymeTask(RegistryKey),
+    DrawingTask(RegistryKey)
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum CommandType {
     Setup,
-    Update
+    Update,
 }
 
 impl<'lua> FromLua<'lua> for CommandType {
@@ -39,7 +44,8 @@ impl<'lua> FromLua<'lua> for CommandType {
 /// Structure chargé de la gestion des commandes vers le moteur de jeu.
 pub struct CommandProcessor {
     setup_command: Vec<Command>, // File de commande à executer une seule fois. 
-    update_command: Vec<Command> // File de commande à executer périodiquement.
+    update_command: Vec<Command>, // File de commande à executer périodiquement.
+    draw_command: Vec<Command>
 }
 
 impl CommandProcessor {
@@ -47,6 +53,7 @@ impl CommandProcessor {
         Self {
             setup_command: Vec::new(),
             update_command: Vec::new(),
+            draw_command: Vec::new(),
         }
     }
 
@@ -62,6 +69,14 @@ impl CommandProcessor {
         }
     }
 
+    /// Créer une nouvelle tâche d'affichage.
+    ///
+    /// # Argument
+    /// * `key`: fonction d'affichage en lua.
+    pub fn new_drawing_task(&mut self, key: RegistryKey) {
+        self.draw_command.push(Command::DrawingTask(key));
+    }
+
     /// Execute une seule fois les commandes dans la file setup_command (au démarrage).
     /// Libère les fonctions 
     pub fn process_setup(&mut self, lua: &Lua) -> LuaResult<()> {
@@ -71,6 +86,10 @@ impl CommandProcessor {
                     let func: Function = lua.registry_value(&key)?;
                     func.call::<(), ()>(())?;
                     lua.remove_registry_value(key)?;
+                }
+
+                _ => {
+                    return Err(LuaError::RuntimeError("Unexpected command for setup processing.".to_string()));
                 }
             }
         }
@@ -86,8 +105,34 @@ impl CommandProcessor {
                     let func: Function = lua.registry_value(key)?;
                     func.call::<f32, ()>(dt)?;
                 }
+
+                _ => {
+                    return Err(LuaError::RuntimeError("Unexpected command for update processing.".to_string()));
+                }
             }
         }
+        Ok(())
+    }
+
+    /// Est chargée de gérer les commandes d'affichage du moteur.
+    ///
+    /// # Arguments
+    /// * `lua`: interface l'interpréteur lua.
+    /// * `renderer`: instance de l'afficheur du moteur car la commande Draw l'a en argument.
+    pub fn process_draw(&self, lua: &Lua, renderer: &Rc<RefCell<Renderer>>) -> LuaResult<()> {
+        for cmd in &self.draw_command {
+            match cmd {
+                Command::DrawingTask(key) => {
+                    let func: Function = lua.registry_value(key)?;
+                    func.call::<_, ()>(renderer.clone())?;
+                }
+
+                _ => {
+                    return Err(LuaError::RuntimeError("Unexpected command for drawing process.".to_string()));
+                }
+            }
+        }
+
         Ok(())
     }
 
@@ -97,18 +142,41 @@ impl CommandProcessor {
             match cmd {
                 Command::AnonymeTask(key) => {
                     lua.remove_registry_value(key)?;
+                },
+
+                _ => {
+                    return Err(LuaError::RuntimeError("Unexpected command for update.".to_string()));
                 }
             }
         }
+
+        for cmd in self.draw_command.drain(..) {
+            match cmd {
+                 Command::DrawingTask(key) => {
+                    lua.remove_registry_value(key)?;
+                },
+
+                _ => {
+                    return Err(LuaError::RuntimeError("Unexpected command for drawing".to_string()));
+                }
+            }
+        }
+
         Ok(())
     }
 }
 
 impl UserData for CommandProcessor {
     fn add_methods<'lua, M: mlua::prelude::LuaUserDataMethods<'lua, Self>>(methods: &mut M) {
-        methods.add_method_mut("new_anonyme_task", |lua, this, (cmd_type, func): (CommandType, Function)| {
+        methods.add_method_mut("new_anonym_task", |lua, this, (cmd_type, func): (CommandType, Function)| {
             let key = lua.create_registry_value(func)?;
             this.new_anonyme_task(cmd_type, key);
+            Ok(())
+        });
+
+        methods.add_method_mut("new_drawing_task", |lua, this, func: Function| {
+            let key = lua.create_registry_value(func)?;
+            this.new_drawing_task(key);
             Ok(())
         });
 

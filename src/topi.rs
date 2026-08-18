@@ -10,13 +10,14 @@ use commands::{CommandProcessor};
 
 mod text;
 mod assets;
-mod renderer;
+pub mod renderer;
 pub mod commands;
+pub mod color;
 
 pub struct TopiEngine {
     sdl_context: Sdl,
     video_subsystem: VideoSubsystem,
-    renderer: Renderer,
+    renderer: Rc<RefCell<Renderer>>,
 
     texture_creator: TextureCreator<WindowContext>,
     assets: Assets,
@@ -40,7 +41,7 @@ impl TopiEngine {
         Self {
             sdl_context,
             video_subsystem,
-            renderer: Renderer::new(canvas),
+            renderer: Rc::new(RefCell::new(Renderer::new(canvas))),
 
             texture_creator,
             assets: Assets::new(),
@@ -75,8 +76,9 @@ impl UserData for TopiEngine {
                 }
 
                 this.commands.borrow_mut().process_update(lua, dt)?;
+                this.commands.borrow_mut().process_draw(lua, &this.renderer)?;
 
-                this.renderer.flush();
+                this.renderer.borrow_mut().flush();
             }
 
             this.commands.borrow_mut().clear(lua)?;
@@ -86,6 +88,10 @@ impl UserData for TopiEngine {
 
         methods.add_method_mut("commands", |_lua, this, ()| {
             Ok(this.commands.clone())
+        });
+
+        methods.add_method_mut("renderer", |_lua, this, ()| {
+            Ok(this.renderer.clone())
         });
     }
 }
