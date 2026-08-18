@@ -1,12 +1,17 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use mlua::UserData;
 use mlua::prelude::*;
 use sdl2::{EventPump, Sdl, VideoSubsystem, render::TextureCreator, video::WindowContext};
 use assets::{Assets, AssetId};
 use renderer::Renderer;
+use commands::{CommandProcessor};
 
 mod text;
 mod assets;
 mod renderer;
+pub mod commands;
 
 pub struct TopiEngine {
     sdl_context: Sdl,
@@ -15,6 +20,8 @@ pub struct TopiEngine {
 
     texture_creator: TextureCreator<WindowContext>,
     assets: Assets,
+
+    commands: Rc<RefCell<CommandProcessor>>,
 
     event_pump: EventPump,
     run: bool
@@ -38,6 +45,8 @@ impl TopiEngine {
             texture_creator,
             assets: Assets::new(),
 
+            commands: Rc::new(RefCell::new(CommandProcessor::new())),
+
             event_pump,
             run: true
         }
@@ -46,38 +55,37 @@ impl TopiEngine {
     pub fn load_texture(&mut self, texture_path: &str, id: &AssetId) {
         self.assets.load_texture(&self.texture_creator, texture_path, id);
     }
-
-    pub fn get_renderer(&mut self) -> &renderer::Renderer {
-        &self.renderer
-    }
-
-    pub fn run(&mut self) {
-        while self.run {
-            self.event_handler();
-            self.update();
-            self.renderer.flush();
-        }
-    }
-
-    fn event_handler(&mut self) {
-        for event in self.event_pump.poll_iter() {
-            match event {
-                sdl2::event::Event::Quit { .. } => { self.run = false; },
-                _ => {  }
-            }
-        }
-    }
-
-    fn update(&mut self) {
-        
-    }
 }
 
 impl UserData for TopiEngine {
     fn add_methods<'lua, M: LuaUserDataMethods<'lua, Self>>(methods: &mut M) {
-        methods.add_method_mut("run", |_lua, this, ()| {
-            this.run();
+        methods.add_method_mut("run", |lua, this, ()| {
+            this.commands.borrow_mut().process_setup(lua)?;
+            let mut last_frame = std::time::Instant::now();
+
+            while this.run {
+                let dt = last_frame.elapsed().as_secs_f32();
+                last_frame = std::time::Instant::now();
+
+                for event in this.event_pump.poll_iter() {
+                    match event {
+                        sdl2::event::Event::Quit { .. } => this.run = false,
+                        _ => {}
+                    }
+                }
+
+                this.commands.borrow_mut().process_update(lua, dt)?;
+
+                this.renderer.flush();
+            }
+
+            this.commands.borrow_mut().clear(lua)?;
+
             Ok(())
+        });
+
+        methods.add_method_mut("commands", |_lua, this, ()| {
+            Ok(this.commands.clone())
         });
     }
 }
