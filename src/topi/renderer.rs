@@ -31,6 +31,8 @@ impl Renderer {
     }
 
     pub fn flush(&mut self) {
+        self.canvas.clear();
+
         for item in self.queue.drain(..) {
             match item {
                 DrawableItem::Rect {x, y, w, h, color} => {
@@ -42,6 +44,7 @@ impl Renderer {
                 DrawableItem::Sprite { x, y, id } => { /* TODO */ }
             }
         }
+
         self.canvas.present();
     }
 }
