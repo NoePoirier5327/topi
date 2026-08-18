@@ -36,3 +36,25 @@ macro_rules! impl_lua_stub {
         }
     };
 }
+
+#[macro_export]
+macro_rules! impl_lua_enum_stub {
+    (
+        enum $enum_name:ident {
+            $($variant:ident),* $(,)?
+        }
+    ) => {
+        impl $enum_name {
+            pub fn generate_stub() -> String {
+                let mut stub = String::new();
+                stub.push_str(&format!("---@enum {}\n", stringify!($enum_name)));
+                stub.push_str(&format!("local {} = {{\n", stringify!($enum_name)));
+                $(
+                    stub.push_str(&format!("    {} = \"{}\",\n", stringify!($variant), stringify!($variant)));
+                )*
+                stub.push_str("}\n\n");
+                stub
+            }
+        }
+    };
+}
