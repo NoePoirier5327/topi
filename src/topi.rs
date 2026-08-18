@@ -62,11 +62,13 @@ impl UserData for TopiEngine {
     fn add_methods<'lua, M: LuaUserDataMethods<'lua, Self>>(methods: &mut M) {
         methods.add_method_mut("run", |lua, this, ()| {
             this.commands.borrow_mut().process_setup(lua)?;
+            let target_frame_duration = std::time::Duration::from_secs_f32(1.0 / 60.0);
             let mut last_frame = std::time::Instant::now();
 
             while this.run {
                 let dt = last_frame.elapsed().as_secs_f32();
-                last_frame = std::time::Instant::now();
+                let frame_start = std::time::Instant::now();
+                last_frame = frame_start;
 
                 for event in this.event_pump.poll_iter() {
                     match event {
@@ -79,6 +81,12 @@ impl UserData for TopiEngine {
                 this.commands.borrow_mut().process_draw(lua, &this.renderer)?;
 
                 this.renderer.borrow_mut().flush();
+
+                // Pause si la frame a été calculée trop vite
+                let elapsed = frame_start.elapsed();
+                if elapsed < target_frame_duration {
+                    std::thread::sleep(target_frame_duration - elapsed);
+                }
             }
 
             this.commands.borrow_mut().clear(lua)?;
