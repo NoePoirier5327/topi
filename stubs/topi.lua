@@ -11,10 +11,33 @@ local CommandProcessor = {}
 
 ---@param cmd_type CommandType
 ---@param func fun(dt?: number)
-function CommandProcessor:new_anonyme_task(cmd_type, func) end
+---@return nil
+function CommandProcessor:new_anonym_task(cmd_type, func) end
+
+---@param func fun(renderer: Renderer)
+---@return nil
+function CommandProcessor:new_drawing_task(func) end
 
 ---@return nil
 function CommandProcessor:clear() end
+
+---@class RGBAColor
+---@field r number
+---@field g number
+---@field b number
+---@field a number
+local RGBAColor = {}
+
+---@class Renderer
+local Renderer = {}
+
+---@param x number
+---@param y number
+---@param w number
+---@param h number
+---@param color RGBAColor
+---@return nil
+function Renderer:draw_colored_rect(x, y, w, h, color) end
 
 ---@class TopiEngine
 local TopiEngine = {}

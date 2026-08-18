@@ -3,18 +3,44 @@ mod topi;
 
 use topi::TopiEngine;
 use topi::commands::{CommandProcessor, CommandType};
+use topi::renderer::Renderer;
+use topi::color::RGBAColor;
 
-crate::impl_lua_stub! {
+crate::impl_lua_class_stub! {
     class TopiEngine {
-        fn run() -> "nil";
-        fn commands() -> "CommandProcessor";
+        methods {
+            fn run() -> "nil";
+            fn commands() -> "CommandProcessor";
+        }
     }
 }
 
-crate::impl_lua_stub! {
+crate::impl_lua_class_stub! {
     class CommandProcessor {
-        fn new_anonyme_task(cmd_type: "CommandType", func: "fun(dt?: number)");
-        fn clear() -> "nil";
+        methods {
+            fn new_anonym_task(cmd_type: "CommandType", func: "fun(dt?: number)") -> "nil";
+            fn new_drawing_task(func: "fun(renderer: Renderer)") -> "nil";
+            fn clear() -> "nil";
+        }
+    }
+}
+
+crate::impl_lua_class_stub! {
+    class Renderer {
+        methods {
+            fn draw_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor") -> "nil";
+        }
+    }
+}
+
+crate::impl_lua_class_stub! {
+    class RGBAColor {
+        fields {
+            r: "number",
+            g: "number",
+            b: "number",
+            a: "number"
+        }
     }
 }
 
@@ -31,6 +57,8 @@ fn main() {
 
     stub.push_str(&CommandType::generate_stub());
     stub.push_str(&CommandProcessor::generate_stub());
+    stub.push_str(&RGBAColor::generate_stub());
+    stub.push_str(&Renderer::generate_stub());
     stub.push_str(&TopiEngine::generate_stub());
 
     stub.push_str("---@class Topi\n");
