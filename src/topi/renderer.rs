@@ -1,16 +1,11 @@
-use sdl2::{render::{Canvas, TextureCreator}, video::{Window, WindowContext}};
+use mlua::UserData;
+use sdl2::{render::Canvas, video::Window};
+use super::color::RGBAColor;
 
 pub enum DrawableItem {
     Sprite {x: i32, y: i32, id: usize},
-    Rect {x: i32, y: i32, w: u32, h: u32, color: RGBColor},
+    ColoredRect {x: i32, y: i32, w: u32, h: u32, color: RGBAColor},
     Text {x: i32, y: i32, content: String},
-}
-
-pub struct RGBColor {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-    pub a: u8,
 }
 
 pub struct Renderer {
@@ -31,11 +26,12 @@ impl Renderer {
     }
 
     pub fn flush(&mut self) {
+        self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(0, 0, 0, 0));
         self.canvas.clear();
 
         for item in self.queue.drain(..) {
             match item {
-                DrawableItem::Rect {x, y, w, h, color} => {
+                DrawableItem::ColoredRect {x, y, w, h, color} => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
                     let _ = self.canvas.fill_rect(sdl2::rect::Rect::new(x, y, w, h));
                 },
