@@ -44,3 +44,12 @@ impl Renderer {
         self.canvas.present();
     }
 }
+
+impl UserData for Renderer {
+    fn add_methods<'lua, M: mlua::prelude::LuaUserDataMethods<'lua, Self>>(methods: &mut M) {
+        methods.add_method_mut("draw_colored_rect", |_lua, this, (x, y, w, h, color): (i32, i32, u32, u32, RGBAColor)| {
+            this.submit(DrawableItem::ColoredRect { x, y, w, h, color });
+            Ok(())
+        });
+    }
+}

@@ -9,6 +9,6 @@ function Hello()
   print("Hello")
 end
 
-app:commands():new_anonyme_task("Setup", Setup)
-app:commands():new_anonyme_task("Update", Hello)
+app:commands():new_anonym_task("Setup", Setup)
+app:commands():new_anonym_task("Update", Hello)
 app:run()
