@@ -7,6 +7,7 @@ pub enum DrawableItem {
     FilledColoredTriangle {x1: i32, y1: i32, x2: i32, y2: i32, x3: i32, y3: i32, color: RGBAColor},
     FilledColoredCircle {cx: i32, cy: i32, radius: f64, color: RGBAColor},
     FilledColoredRect {x: i32, y: i32, w: u32, h: u32, color: RGBAColor},
+    Line {x1: i32, y1: i32, x2: i32, y2: i32, thickness: f64, color: RGBAColor},
     Text {x: i32, y: i32, content: String},
 }
 
@@ -79,6 +80,48 @@ impl Renderer {
                     let _ = self.canvas.fill_rect(sdl2::rect::Rect::new(x, y, w, h));
                 },
 
+                DrawableItem::Line { x1, y1, x2, y2, thickness, color } => {
+                    let sdl_color = Color::RGBA(color.r, color.g, color.b, color.a);
+
+                    // On calcul le vecteur normal à la ligne de nome len.
+                    let dx = (x2 - x1) as f64;
+                    let dy = (y2 - y1) as f64;
+
+                    let len = (dx*dx + dy*dy).sqrt();
+
+                    let ox = -(dy / len) * (thickness / 2.0);
+                    let oy = (dx / len) * (thickness / 2.0);
+
+                    // On affiche la ligne
+                    let vertices = [
+                        Vertex {
+                            position: FPoint::new((x1 as f64 + ox) as f32, (y1 as f64 + oy) as f32),
+                            color: sdl_color,
+                            tex_coord: FPoint::new(0.0, 0.0)
+                        },
+
+                        Vertex {
+                            position: FPoint::new((x1 as f64 - ox) as f32, (y1 as f64 - oy) as f32),
+                            color: sdl_color,
+                            tex_coord: FPoint::new(0.0, 0.0)
+                        },
+
+                        Vertex {
+                            position: FPoint::new((x2 as f64 - ox) as f32, (y2 as f64 - oy) as f32),
+                            color: sdl_color,
+                            tex_coord: FPoint::new(0.0, 0.0)
+                        },
+
+                        Vertex {
+                            position: FPoint::new((x2 as f64 + ox) as f32, (y2 as f64 + oy) as f32),
+                            color: sdl_color,
+                            tex_coord: FPoint::new(0.0, 0.0)
+                        }
+                    ];
+
+                    let _ = self.canvas.render_geometry(&vertices, None, &[0, 1, 2, 0, 2, 3]);
+                }
+
                 DrawableItem::Text { x, y, content } => { /* TODO */ },
                 DrawableItem::Sprite { x, y, id } => { /* TODO */ }
             }
@@ -102,6 +145,11 @@ impl UserData for Renderer {
 
         methods.add_method_mut("draw_filled_colored_rect", |_lua, this, (x, y, w, h, color): (i32, i32, u32, u32, RGBAColor)| {
             this.submit(DrawableItem::FilledColoredRect { x, y, w, h, color });
+            Ok(())
+        });
+
+        methods.add_method_mut("draw_line", |_lua, this, (x1, y1, x2, y2, thickness, color): (i32, i32, i32, i32, f64, RGBAColor)| {
+            this.submit(DrawableItem::Line { x1, y1, x2, y2, thickness, color });
             Ok(())
         });
     }

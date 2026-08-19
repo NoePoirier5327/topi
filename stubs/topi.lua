@@ -50,6 +50,14 @@ function Renderer:draw_filled_colored_circle(cx, cy, radius, color) end
 ---@param color RGBAColor
 function Renderer:draw_filled_colored_rect(x, y, w, h, color) end
 
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param thickness number
+---@param color RGBAColor
+function Renderer:draw_line(x1, y1, x2, y2, thickness, color) end
+
 ---@class TopiEngine
 local TopiEngine = {}
 
