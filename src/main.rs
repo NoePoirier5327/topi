@@ -9,7 +9,7 @@ use topi::color::RGBAColor;
 crate::impl_lua_class_stub! {
     class TopiEngine {
         methods {
-            fn run() -> "nil";
+            fn run();
             fn commands() -> "CommandProcessor";
         }
     }
@@ -18,9 +18,9 @@ crate::impl_lua_class_stub! {
 crate::impl_lua_class_stub! {
     class CommandProcessor {
         methods {
-            fn new_anonym_task(cmd_type: "CommandType", func: "fun(dt?: number)") -> "nil";
-            fn new_drawing_task(func: "fun(renderer: Renderer)") -> "nil";
-            fn clear() -> "nil";
+            fn new_anonym_task(cmd_type: "CommandType", func: "fun(dt?: number)");
+            fn new_drawing_task(func: "fun(renderer: Renderer)");
+            fn clear();
         }
     }
 }
@@ -28,7 +28,7 @@ crate::impl_lua_class_stub! {
 crate::impl_lua_class_stub! {
     class Renderer {
         methods {
-            fn draw_filled_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor") -> "nil";
+            fn draw_filled_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor");
         }
     }
 }
