@@ -37,6 +37,12 @@ local Renderer = {}
 ---@param color RGBAColor
 function Renderer:draw_filled_colored_triangle(x1, y1, x2, y2, x3, y3, color) end
 
+---@param cx number
+---@param cy number
+---@param radius number
+---@param color RGBAColor
+function Renderer:draw_filled_colored_circle(cx, cy, radius, color) end
+
 ---@param x number
 ---@param y number
 ---@param w number
