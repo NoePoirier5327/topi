@@ -37,7 +37,7 @@ local Renderer = {}
 ---@param h number
 ---@param color RGBAColor
 ---@return nil
-function Renderer:draw_colored_rect(x, y, w, h, color) end
+function Renderer:draw_filled_colored_rect(x, y, w, h, color) end
 
 ---@class TopiEngine
 local TopiEngine = {}

@@ -28,7 +28,7 @@ crate::impl_lua_class_stub! {
 crate::impl_lua_class_stub! {
     class Renderer {
         methods {
-            fn draw_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor") -> "nil";
+            fn draw_filled_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor") -> "nil";
         }
     }
 }
