@@ -6,7 +6,7 @@ local SPEED = { x = math.random(400, 600) * directions[math.random(1,2)], y = ma
 local RECT_SIZE = { w = math.random(50, 150), h = math.random(50, 150) }
 local pos = { x = math.random(RECT_SIZE.w, 1000 - RECT_SIZE.w), y = math.random(RECT_SIZE.h, 1000 - RECT_SIZE.h) }
 
-function update_rect(dt)
+local function update_rect(dt)
   pos.x = pos.x + SPEED.x * dt
   pos.y = pos.y + SPEED.y * dt
 
@@ -19,7 +19,7 @@ function update_rect(dt)
   end
 end
 
-function draw_rect(renderer)
+local function draw_rect(renderer)
   renderer:draw_colored_rect(pos.x, pos.y, RECT_SIZE.w, RECT_SIZE.h, { r = 255, g = 0, b = 0, a = 255 })
 end
 
