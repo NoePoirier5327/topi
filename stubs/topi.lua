@@ -11,14 +11,11 @@ local CommandProcessor = {}
 
 ---@param cmd_type CommandType
 ---@param func fun(dt?: number)
----@return nil
 function CommandProcessor:new_anonym_task(cmd_type, func) end
 
 ---@param func fun(renderer: Renderer)
----@return nil
 function CommandProcessor:new_drawing_task(func) end
 
----@return nil
 function CommandProcessor:clear() end
 
 ---@class RGBAColor
@@ -31,18 +28,25 @@ local RGBAColor = {}
 ---@class Renderer
 local Renderer = {}
 
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param x3 number
+---@param y3 number
+---@param color RGBAColor
+function Renderer:draw_filled_colored_triangle(x1, y1, x2, y2, x3, y3, color) end
+
 ---@param x number
 ---@param y number
 ---@param w number
 ---@param h number
 ---@param color RGBAColor
----@return nil
 function Renderer:draw_filled_colored_rect(x, y, w, h, color) end
 
 ---@class TopiEngine
 local TopiEngine = {}
 
----@return nil
 function TopiEngine:run() end
 
 ---@return CommandProcessor

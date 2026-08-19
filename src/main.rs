@@ -28,6 +28,7 @@ crate::impl_lua_class_stub! {
 crate::impl_lua_class_stub! {
     class Renderer {
         methods {
+            fn draw_filled_colored_triangle(x1: "number", y1: "number", x2: "number", y2: "number", x3: "number", y3: "number", color: "RGBAColor");
             fn draw_filled_colored_rect(x: "number", y: "number", w: "number", h: "number", color: "RGBAColor");
         }
     }
