@@ -97,9 +97,5 @@ impl UserData for TopiEngine {
         methods.add_method_mut("commands", |_lua, this, ()| {
             Ok(this.commands.clone())
         });
-
-        methods.add_method_mut("renderer", |_lua, this, ()| {
-            Ok(this.renderer.clone())
-        });
     }
 }
