@@ -20,7 +20,7 @@ local function update_rect(dt)
 end
 
 local function draw_rect(renderer)
-  renderer:draw_colored_rect(pos.x, pos.y, RECT_SIZE.w, RECT_SIZE.h, { r = 255, g = 0, b = 0, a = 255 })
+  renderer:draw_filled_colored_rect(pos.x, pos.y, RECT_SIZE.w, RECT_SIZE.h, { r = 255, g = 0, b = 0, a = 255 })
 end
 
 app:commands():new_anonym_task("Update", update_rect)
