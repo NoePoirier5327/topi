@@ -1,6 +1,10 @@
+-- On importe le moteur de jeu
 local topi = require("topi")
+
+-- On créer une nouvelle fenêtre dans le moteur de jeu.
 local app = topi.init("Shapes", 1000, 1000)
 
+-- On appelle le moteur pour afficher des triangles, cercles et rectangles.
 app:commands():new_drawing_task(
   function (renderer)
     renderer:draw_filled_colored_triangle(0, 0, 500, 0, 500, 500, {r = 0, g = 255, b = 0, a = 255})
@@ -9,4 +13,5 @@ app:commands():new_drawing_task(
   end
 )
 
+-- On lance l'application.
 app:run()
