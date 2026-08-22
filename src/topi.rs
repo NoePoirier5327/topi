@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use mlua::UserData;
 use mlua::prelude::*;
-use sdl2::{EventPump, Sdl, VideoSubsystem, render::TextureCreator, video::WindowContext};
+use sdl2::{EventPump, Sdl, VideoSubsystem, render::{TextureCreator, BlendMode}, video::WindowContext};
 use assets::{Assets, AssetId};
 use renderer::Renderer;
 use commands::{CommandProcessor};
@@ -34,7 +34,8 @@ impl TopiEngine {
         let video_subsystem = sdl_context.video().expect("Failed to load video subsystem.");
         let window = video_subsystem.window(window_name, window_width, window_height).position_centered().build()
             .expect("Failed to load sdl2 window.");
-        let canvas = window.clone().into_canvas().build().expect("Failed to load render surface.");
+        let mut canvas = window.clone().into_canvas().build().expect("Failed to load render surface.");
+        canvas.set_blend_mode(BlendMode::Blend);
         let texture_creator = canvas.texture_creator();
         let event_pump = sdl_context.event_pump().unwrap();
 
