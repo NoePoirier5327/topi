@@ -22,5 +22,6 @@ impl AppLogic for AppTest {
         renderer.set_stroke_weight(20);
         renderer.draw_rect(100, 100, 100, 100);
         renderer.draw_circle(200, 200, 50f64);
+        renderer.draw_line(50, -100, 50, 700, 10);
     }
 }

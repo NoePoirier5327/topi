@@ -147,6 +147,8 @@ impl RenderManager {
     /// * `thickness` épaisseur de la nouvelle ligne.
     pub fn draw_line(&mut self, x1: i32, y1: i32, x2: i32, y2: i32, thickness: u32) {
         if self.draw_color.a == 0 { return }
+        if !Self::line_is_in_window(x1, y1, x2, y2, thickness, self.window_width, self.window_height) { return }
+
         self.renderable_items.push(
             Box::new(line::Line::new(x1, y1, x2, y2, thickness, self.draw_color))
         );
@@ -230,6 +232,9 @@ impl RenderManager {
     /// * `h` hauteur du rectangle.
     /// * `window_width` largeur de la fenêtre de jeu.
     /// * `window_height` hauteur de la fenêtre de jeu.
+    ///
+    /// # Return
+    /// `true` le rectangle est dans la fenêtre, `false` sinon.
     #[inline]
     fn rect_is_in_window(x: i32, y: i32, w: u32, h: u32, window_width: u32, window_height: u32) -> bool {
         let (w, h) = (w as i32, h as i32);
@@ -252,6 +257,9 @@ impl RenderManager {
     /// * `radius` rayon du cercle.
     /// * `window_width` largeur de la fenêtre de jeu.
     /// * `window_height` hauteur de la fenêtre de jeu.
+    ///
+    /// # Return
+    /// `true` le cercle est dans la fenêtre, `false` sinon.
     #[inline]
     fn circle_is_in_window(cx: i32, cy: i32, radius: f64, window_width: u32, window_height: u32) -> bool {
         let (cx, cy) = (cx as f64, cy as f64);
@@ -264,5 +272,57 @@ impl RenderManager {
         let dy = cy - closest_y;
 
         dx * dx + dy * dy < radius * radius
+    }
+
+    /// Vérifie que la ligne en paramètre est dans la fenêtre de jeu en paramètre.
+    /// Fonction générée par Claude Haiku 5.5.
+    ///
+    /// # Arguments
+    /// * `x1` coordonnée en x du premier point caractérisant la ligne.
+    /// * `y1` coordonnée en y du premier point caractérisant la ligne.
+    /// * `x2` coordonnée en x du second point caractérisant la ligne.
+    /// * `y2` coordonnée en y du second point caractérisant la ligne.
+    /// * `thickness` épaisseur de la ligne.
+    /// * `window_width` largeur de la fenêtre de jeu.
+    /// * `window_height` hauteur de la fenêtre de jeu.
+    ///
+    /// # Return
+    /// `true` la ligne est dans la fenêtre, `false` sinon.
+    fn line_is_in_window(x1: i32, y1: i32, x2: i32, y2: i32, thickness: u32, window_width: u32, window_height: u32) -> bool {
+        let half = thickness as f64 * 0.5;
+        let (x1, y1, x2, y2) = (x1 as f64, y1 as f64, x2 as f64, y2 as f64);
+        let (dx, dy) = (x2 - x1, y2 - y1);
+
+        let len = (dx * dx + dy * dy).sqrt();
+        let (margin_x, margin_y) = if len == 0f64 {
+            (half, half)
+        } else {
+            (half * dy.abs() / len, half * dx.abs() / len)
+        };
+
+        let (x_min, y_min) = (-margin_x, -margin_y);
+        let (x_max, y_max) = (window_width as f64 + margin_x, window_height as f64 + margin_y);
+
+        let p = [-dx, dx, -dy, dy];
+        let q = [x1 - x_min, x_max - x1, y1 - y_min, y_max - y1];
+
+        let (mut t0, mut t1) = (0f64, 1f64);
+
+        for i in 0..4 {
+            if p[i] == 0f64 {
+                if q[i] <= 0f64 { return false }
+            } else {
+                let r = q[i] / p[i];
+                if p[i] < 0f64 {
+                    if r >= t1 { return false }
+                    t0 = t0.max(r);
+                } else {
+                    if r <= t0 { return false }
+                    t1 = t1.min(r);
+                }
+            }
+        }
+
+        t0 < t1
     }
 }
