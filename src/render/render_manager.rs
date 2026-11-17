@@ -53,6 +53,8 @@ impl RenderManager {
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
 
+        //println!("{}", self.renderable_items.len());
+
         // On charge les changements faits par l'utilisateur.
         for item in self.renderable_items.drain(..) {
             item.display(&mut self.canvas);
@@ -74,7 +76,7 @@ impl RenderManager {
     /// * `height` hauteur du nouveau rectangle.
     pub fn draw_rect(&mut self, x: i32, y: i32, width: u32, height: u32) {
         // On créer le nouveau rectangle plein au centre.
-        if !self.no_fill && self.draw_color.a != 0 {
+        if !self.no_fill && self.draw_color.a != 0 && Self::rect_is_in_window(x, y, width, height, self.window_width, self.window_height){
             self.renderable_items.push(
                 Box::new(rectangle::FilledRectangle::new(x, y, width, height, self.draw_color))
             );
@@ -89,15 +91,17 @@ impl RenderManager {
             let ow = width + 2 * half_stroke_size;
             let oh = height + 2 * half_stroke_size;
 
-            self.renderable_items.push(
-                Box::new(
-                    rectangle::Rectangle::new(
-                        ox, oy, ow, oh,
-                        self.stroke_weight,
-                        self.stroke_color
+            if Self::rect_is_in_window(ox, oy, ow, oh, self.window_width, self.window_height) {
+                self.renderable_items.push(
+                    Box::new(
+                        rectangle::Rectangle::new(
+                            ox, oy, ow, oh,
+                            self.stroke_weight,
+                            self.stroke_color
+                        )
                     )
-                )
-            );
+                );
+            }
         }
     }
 
@@ -109,7 +113,7 @@ impl RenderManager {
     /// * `radius` rayon du nouveau cercle (doit être positif ou nul).
     pub fn draw_circle(&mut self, cx: i32, cy: i32, radius: f64) {
         // On créer le nouveau cercle plein au centre.
-        if !self.no_fill && self.draw_color.a != 0 {
+        if !self.no_fill && self.draw_color.a != 0 && Self::circle_is_in_window(cx, cy, radius, self.window_width, self.window_height) {
             self.renderable_items.push(
                 Box::new(circle::FilledCircle::new(cx, cy, radius, self.draw_color))
             );
@@ -117,16 +121,19 @@ impl RenderManager {
 
         // On créer le nouveau cercle de bordure.
         if self.stroke_color.a != 0 && self.stroke_weight != 0 {
-            self.renderable_items.push(
-                Box::new(
-                    circle::Circle::new(
-                        cx, cy,
-                        radius + self.stroke_weight as f64,
-                        self.stroke_weight,
-                        self.stroke_color
+            let out_radius = radius + self.stroke_weight as f64;
+            if Self::circle_is_in_window(cx, cy, out_radius, self.window_width, self.window_height) {
+                self.renderable_items.push(
+                    Box::new(
+                        circle::Circle::new(
+                            cx, cy,
+                            out_radius,
+                            self.stroke_weight,
+                            self.stroke_color
+                        )
                     )
-                )
-            );
+                );
+            }
         }
     }
 
@@ -167,7 +174,7 @@ impl RenderManager {
                 text::Text::new(surface, &target_pos)
             )
         );
-   }
+    }
 
     /// Mutateur de la couleur de rendue des objets du moteur.
     #[inline]
@@ -211,5 +218,51 @@ impl RenderManager {
     #[inline]
     pub fn get_font(&self) -> (&str, u16) {
         (&self.font_path, self.font_size)
+    }
+
+    /// Vérifie que le rectangle en paramètre est entièrement ou partiellement dans la fenêtre de
+    /// jeu.
+    ///
+    /// # Arguments
+    /// * `x` position de la gauche du rectangle.
+    /// * `y` position du haut du rectangle.
+    /// * `w` largeur du rectangle.
+    /// * `h` hauteur du rectangle.
+    /// * `window_width` largeur de la fenêtre de jeu.
+    /// * `window_height` hauteur de la fenêtre de jeu.
+    #[inline]
+    fn rect_is_in_window(x: i32, y: i32, w: u32, h: u32, window_width: u32, window_height: u32) -> bool {
+        let (w, h) = (w as i32, h as i32);
+        let (win_width, win_height) = (window_width as i32, window_height as i32);
+
+        !(
+            x + w <= 0
+            || x >= win_width
+            || y + h <= 0
+            || y >= win_height
+        )
+    }
+
+    /// Vérifie que le cercle en paramètre en entièrement ou partiellement dans la fenêtre de jeu en
+    /// paramètre.
+    ///
+    /// # Arguments
+    /// * `cx` position en x du centre du cercle.
+    /// * `cy` position en y du centre du cercle.
+    /// * `radius` rayon du cercle.
+    /// * `window_width` largeur de la fenêtre de jeu.
+    /// * `window_height` hauteur de la fenêtre de jeu.
+    #[inline]
+    fn circle_is_in_window(cx: i32, cy: i32, radius: f64, window_width: u32, window_height: u32) -> bool {
+        let (cx, cy) = (cx as f64, cy as f64);
+
+        // Point de la fenêtre le plus proche du cercle.
+        let closest_x = cx.clamp(0f64, window_width as f64);
+        let closest_y = cy.clamp(0f64, window_height as f64);
+
+        let dx = cx - closest_x;
+        let dy = cy - closest_y;
+
+        dx * dx + dy * dy < radius * radius
     }
 }
