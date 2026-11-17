@@ -170,6 +170,7 @@ impl RenderManager {
             .unwrap();
 
         let target_pos = Rect::new(x, y, surface.width(), surface.height());
+        if !Self::rect_is_in_window(x, y, surface.width(), surface.height(), self.window_width, self.window_height) { return }
 
         self.renderable_items.push(
             Box::new(
