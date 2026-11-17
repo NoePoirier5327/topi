@@ -9,7 +9,7 @@ const WINDOW_HEIGHT: u32 = 1200;
 
 fn main() {
     topi::App::new(
-        "Example - Falling balls".to_string(),
+        "Example - Physics simulation.".to_string(),
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         app::App::new(WINDOW_WIDTH, WINDOW_HEIGHT)
