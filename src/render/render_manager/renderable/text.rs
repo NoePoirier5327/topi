@@ -27,7 +27,7 @@ impl Text {
 }
 
 /// Interface générique pour topi.
-impl<'txt> Renderable for Text {
+impl Renderable for Text {
     fn display(&self, canvas: &mut WindowCanvas) {
         let texture_creator = canvas.texture_creator();
         if let Ok(texture) = texture_creator.create_texture_from_surface(&self.surface) {
