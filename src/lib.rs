@@ -63,7 +63,7 @@ impl App {
             Box::leak(Box::new(sdl2::ttf::init().expect("Failed to init sdl2 ttf context.")));
 
         Self {
-            renderer: render::new_render_context(canvas, width, height, &ttf_context),
+            renderer: render::new_render_context(canvas, width, height, ttf_context),
             input: input::new_input_manager(),
             event_pump: sdl_context.event_pump().expect("Failed to create sdl2 event pump."),
             game_object: Box::new(game_object),
