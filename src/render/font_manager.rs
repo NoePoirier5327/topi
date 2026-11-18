@@ -114,7 +114,7 @@ impl FontManager {
             }
         }
 
-        debug_assert!(self.fonts.len() <= MAX_CACHE_SIZE, "Cache overload detected.");
+        debug_assert!(self.fonts.len() <= MAX_CACHE_SIZE, "Font cache overload detected.");
     }
 }
 
