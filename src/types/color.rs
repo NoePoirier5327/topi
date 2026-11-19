@@ -11,7 +11,7 @@ pub const TRANSPARENT: Color = Color { r: 0, g: 0, b: 0, a: 0 };
 
 /// Correspond à une couleur dans le moteur topi.
 /// La couleur courante est au format RGBA.
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Color {
     r: u8,
     g: u8,
