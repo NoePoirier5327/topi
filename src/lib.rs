@@ -40,14 +40,14 @@ impl App {
     ///
     /// # Return
     /// Instance vers la nouvelle fenêtre de jeu.
-    pub fn new<G: AppLogic + 'static>(title: String, width: u32, height: u32, game_object: G) -> Self {
+    pub fn new<G: AppLogic + 'static>(title: &str, width: u32, height: u32, game_object: G) -> Self {
         // On initialise la sdl2.
         let sdl_context = sdl2::init().expect("Failed to load sdl2 context.");
         let video_subsystem = sdl_context.video().expect("Failed to init the sdl2 video subsystem.");
 
         // On créer la nouvelle fenêtre.
         let window = video_subsystem
-            .window(&title, width, height)
+            .window(title, width, height)
             .position_centered()
             .allow_highdpi()
             .build()
