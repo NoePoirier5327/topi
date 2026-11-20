@@ -2,7 +2,7 @@
 
 mod renderable;
 
-use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, surface::Surface, ttf};
+use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, surface::Surface};
 use std::rc::Rc;
 use renderable::{Renderable, circle, line, rectangle};
 use crate::{render::render_manager::renderable::text, types};
