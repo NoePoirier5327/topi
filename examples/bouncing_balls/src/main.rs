@@ -7,7 +7,7 @@ const WINDOW_HEIGHT: u32 = 1000;
 
 fn main() {
     App::new(
-        "Example - Bouncing balls".to_string(),
+        "Example - Bouncing balls",
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         BouncingBalls::new(50, -500, 500, 30f64, 50f64)
