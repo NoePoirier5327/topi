@@ -1,6 +1,6 @@
 //! Fichier contenant les interfaces de gestion des ressources de topi.
 
-pub mod font_manager;
+mod font_manager;
 
 use sdl2::{render::{TextureCreator, WindowCanvas}, ttf::Sdl2TtfContext, video::WindowContext, surface::Surface, pixels::Color};
 use std::rc::Rc;
