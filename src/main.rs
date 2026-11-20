@@ -5,7 +5,7 @@ use topi::types::color::Color;
 
 fn main() {
     App::new(
-        "Test".to_string(),
+        "Test",
         600, 600,
         AppTest
     ).run();
