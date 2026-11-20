@@ -2,7 +2,8 @@
 
 mod renderable;
 
-use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, ttf};
+use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, surface::Surface, ttf};
+use std::rc::Rc;
 use renderable::{Renderable, circle, line, rectangle};
 use crate::{render::render_manager::renderable::text, types};
 
@@ -157,17 +158,11 @@ impl RenderManager {
     /// Affiche un nouveau texte sur la fenêtre sdl2.
     ///
     /// # Arguments
-    /// * `text` texte à afficher.
+    /// * `surface` surface du texte à afficher.
     /// * `x` position en x du texte à afficher.
     /// * `y` position en y du texte à afficher.
-    /// * `font` police d'écriture du texte à afficher.
-    pub fn draw_text(&mut self, text: &str, x: i32, y: i32, font: &ttf::Font) {
-        if text.is_empty() || self.draw_color.a == 0 { return }
-
-        let surface = font
-            .render(text)
-            .blended(Color::RGBA(self.draw_color.r, self.draw_color.g, self.draw_color.b, self.draw_color.a))
-            .unwrap();
+    pub fn draw_text(&mut self, surface: Rc<Surface<'static>>, x: i32, y: i32) {
+        if self.draw_color.a == 0 { return }
 
         let target_pos = Rect::new(x, y, surface.width(), surface.height());
         if !Self::rect_is_in_window(x, y, surface.width(), surface.height(), self.window_width, self.window_height) { return }
@@ -183,6 +178,12 @@ impl RenderManager {
     #[inline]
     pub fn set_draw_color(&mut self, color: &types::color::Color) {
         self.draw_color = Color::RGBA(color.get_r(), color.get_g(), color.get_b(), color.get_a());
+    }
+
+    /// Renvoie la couleur d'affichage courante.
+    #[inline]
+    pub fn get_draw_color(&self) -> Color {
+        self.draw_color
     }
 
     /// Mutateur de la couleur des bordures des objets affichés par le moteur.

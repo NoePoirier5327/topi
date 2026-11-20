@@ -3,15 +3,18 @@
 
 // Dépendances externes.
 extern crate sdl2;
-use sdl2::{EventPump, event::Event, mouse::MouseButton, ttf::Sdl2TtfContext};
+use sdl2::{EventPump, event::Event, mouse::MouseButton};
+use std::rc::Rc;
 
 // Modules de la librairie.
 mod render;
 mod input;
+mod resource;
 pub mod toolkit;
 pub mod types;
 
 // Dépendances internes.
+use resource::ResourceManager;
 
 // Exports externes.
 pub use render::RenderContext;
@@ -21,6 +24,7 @@ pub use input::{InputManager, keycode};
 pub struct App {
     renderer: RenderContext,
     input: InputManager,
+    resource: Rc<ResourceManager>,
     event_pump: EventPump,
     game_object: Box<dyn AppLogic>,
 }
@@ -59,12 +63,12 @@ impl App {
         // On active les couleurs transparentes.
         canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
 
-        let ttf_context: &'static Sdl2TtfContext = 
-            Box::leak(Box::new(sdl2::ttf::init().expect("Failed to init sdl2 ttf context.")));
+        let resource = Rc::new(ResourceManager::new(&canvas));
 
         Self {
-            renderer: render::new_render_context(canvas, width, height, ttf_context),
+            renderer: render::new_render_context(canvas, width, height, resource.clone()),
             input: input::new_input_manager(),
+            resource,
             event_pump: sdl_context.event_pump().expect("Failed to create sdl2 event pump."),
             game_object: Box::new(game_object),
         }

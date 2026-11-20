@@ -1,23 +1,22 @@
 //! Fichier contenant l'interface publique vers la manipulation de l'affichage de la fenêtre topi.
 
 mod render_manager;
-mod font_manager;
 
+use std::rc::Rc;
 use render_manager::RenderManager;
-use font_manager::FontManager;
-use sdl2::{render::WindowCanvas, ttf::Sdl2TtfContext};
-
+use crate::resource::ResourceManager;
 use crate::types;
+use sdl2::{render::WindowCanvas};
 
 /// Wrapper pour la création d'un contexte de rendu.
 /// Ne doit pas être exporté de manière publique à l'utilisateur.
-pub fn new_render_context(
+pub fn new_render_context (
     canvas: WindowCanvas,
     window_width: u32,
     window_height: u32,
-    ttf_context: &'static Sdl2TtfContext
+    resource_manager: Rc<ResourceManager>
 ) -> RenderContext {
-    RenderContext::new(canvas, window_width, window_height, ttf_context)
+    RenderContext::new(canvas, window_width, window_height, resource_manager)
 }
 
 /// Wrapper sur la mise à jour d'un contexte de rendu.
@@ -30,8 +29,8 @@ pub fn update_render_context(renderer: &mut RenderContext) {
 /// Contient des interfaces de dessin sur l'écran mais aussi des interfaces de gestion des
 /// ressources visuelles (polices, textures etc...).
 pub struct RenderContext {
+    resource_manager: Rc<ResourceManager>,
     render_manager: RenderManager,
-    font_manager: FontManager
 }
 
 impl RenderContext {
@@ -43,7 +42,7 @@ impl RenderContext {
     /// * `canvas` fenêtre de rendu sdl2 sur laquelle afficher le jeu.
     /// * `window_width` largeur de la fenêtre sous-jacente.
     /// * `window_height` hauteur de la fenêtre sous-jacente.
-    /// * `ttf_context` contexte de création de polices de caractères.
+    /// * `resource_manager` référence vers le gestionnaire de ressources de l'instance de App de topi.
     ///
     /// # Return
     /// Instance vers le nouveau contexte d'affichage.
@@ -51,11 +50,11 @@ impl RenderContext {
         canvas: WindowCanvas,
         window_width: u32,
         window_height: u32,
-        ttf_context: &'static Sdl2TtfContext
+        resource_manager: Rc<ResourceManager>
     ) -> Self {
         Self {
+            resource_manager,
             render_manager: RenderManager::new(canvas, window_width, window_height),
-            font_manager: FontManager::new(ttf_context)
         }
     }
 
@@ -114,8 +113,9 @@ impl RenderContext {
         let (font_path, font_size) = self.render_manager.get_font();
         assert!(!font_path.is_empty(), "No font loaded to draw the text.");
 
-        let font = self.font_manager.load_font(font_path, font_size).unwrap();
-        self.render_manager.draw_text(text, x, y, font);
+        let surface = self.resource_manager.new_text_surface(font_path, font_size, text, self.render_manager.get_draw_color()).unwrap();
+
+        self.render_manager.draw_text(surface, x, y);
     }
 
     /// Change la couleur d'affichage globale pour celle en paramètre.
@@ -160,9 +160,6 @@ impl RenderContext {
     // Charge la police de caractères en paramètre comme police principale pour le rendu.
     #[inline]
     pub fn set_font(&mut self, font_path: &str, font_size: u16) {
-        // On charge la police dans le cache pour faciliter la détection des erreurs si elle n'est
-        // pas valide avant de passer à la suite.
-        self.font_manager.load_font(font_path, font_size).unwrap();
         self.render_manager.set_font(font_path, font_size);
     }
 }

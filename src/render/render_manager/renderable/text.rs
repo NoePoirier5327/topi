@@ -2,10 +2,11 @@
 
 use sdl2::{rect::Rect, render::WindowCanvas, surface::Surface};
 use super::Renderable;
+use std::rc::Rc;
 
 /// Gère l'affichage d'un texte sur la fenêtre sdl2.
 pub struct Text {
-    surface: Surface<'static>,
+    surface: Rc<Surface<'static>>,
     pos: Rect
 }
 
@@ -18,7 +19,7 @@ impl Text {
     ///
     /// # Return
     /// Instance vers le nouveau texte affichable par topi.
-    pub fn new(surface: Surface<'static>, pos: &Rect) -> Self {
+    pub fn new(surface: Rc<Surface<'static>>, pos: &Rect) -> Self {
         Self {
             surface,
             pos: *pos
@@ -30,7 +31,7 @@ impl Text {
 impl Renderable for Text {
     fn display(&self, canvas: &mut WindowCanvas) {
         let texture_creator = canvas.texture_creator();
-        if let Ok(texture) = texture_creator.create_texture_from_surface(&self.surface) {
+        if let Ok(texture) = texture_creator.create_texture_from_surface(&*self.surface) {
             let _ = canvas.copy(&texture, None, Some(self.pos));
         }
     }
