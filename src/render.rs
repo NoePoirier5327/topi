@@ -203,6 +203,10 @@ impl RenderContext {
     }
 
     // Charge la police de caractères en paramètre comme police principale pour le rendu.
+    //
+    // # Arguments
+    // * `font_path` chemin vers la police à charger.
+    // * `font_size` taille du texte de la police à charger.
     #[inline]
     pub fn set_font(&mut self, font_path: &str, font_size: u16) {
         self.render_manager.set_font(font_path, font_size);
