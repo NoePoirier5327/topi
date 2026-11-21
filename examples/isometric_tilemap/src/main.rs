@@ -79,9 +79,9 @@ impl topi::AppLogic for App {
         // On affiche la position et le taux de zoom de la caméra sur l'application.
         renderer.set_draw_color(&topi::types::color::WHITE);
         renderer.set_font("./JetBrainsMonoNerdFont-Bold.ttf", 30);
-        renderer.draw_text("Camera", 0, 0);
-        renderer.draw_text(&format!("x: {} y: {}", self.camera_x, self.camera_y), 0, 30);
-        renderer.draw_text(&format!("zoom: {}", self.camera_zoom), 0, 60);
+        renderer.draw_text("Camera", 5, 0);
+        renderer.draw_text(&format!("x: {} y: {}", self.camera_x, self.camera_y), 5, 30);
+        renderer.draw_text(&format!("zoom: {}", self.camera_zoom), 5, 60);
 
         // On affiche le tilemap isométrique.
         let tile_w = 32.0;
