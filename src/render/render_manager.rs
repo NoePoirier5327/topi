@@ -193,7 +193,7 @@ impl RenderManager {
     /// Mutateur de la couleur de rendue des objets du moteur.
     #[inline]
     pub fn set_draw_color(&mut self, color: &types::color::Color) {
-        self.draw_color = Color::RGBA(color.get_r(), color.get_g(), color.get_b(), color.get_a());
+        self.draw_color = *color;
     }
 
     /// Renvoie la couleur d'affichage courante.
@@ -205,7 +205,7 @@ impl RenderManager {
     /// Mutateur de la couleur des bordures des objets affichés par le moteur.
     #[inline]
     pub fn set_stroke_color(&mut self, color: &types::color::Color) {
-        self.stroke_color = Color::RGBA(color.get_r(), color.get_g(), color.get_b(), color.get_a());
+        self.stroke_color = *color;
     }
 
     /// Mutateur de l'épaisseur des lignes des formes affichables.
