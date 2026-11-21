@@ -4,9 +4,9 @@ mod render_manager;
 
 use std::rc::Rc;
 use render_manager::RenderManager;
-use crate::resource::ResourceManager;
+use crate::{resource::ResourceManager};
 use crate::types;
-use sdl2::{render::WindowCanvas};
+use sdl2::{rect::Rect, render::WindowCanvas};
 
 /// Wrapper pour la création d'un contexte de rendu.
 /// Ne doit pas être exporté de manière publique à l'utilisateur.
@@ -116,6 +116,51 @@ impl RenderContext {
         let surface = self.resource_manager.new_text_surface(font_path, font_size, text, self.render_manager.get_draw_color()).unwrap();
 
         self.render_manager.draw_text(surface, x, y);
+    }
+
+    /// Affiche une image en fonction de sa position cible.
+    ///
+    /// # Arguments
+    /// * `img_path` chemin vers l'image à afficher.
+    /// * `x` position en x de l'image affichée.
+    /// * `y` position en y de l'image affichée.
+    #[inline]
+    pub fn draw_image(&mut self, img_path: &str, x: i32, y: i32) {
+        let surface = self.resource_manager.new_img_surface(img_path).unwrap();
+        let dst_rect = Rect::new(x, y, surface.width(), surface.height());
+        self.render_manager.draw_image(surface, None, dst_rect);
+    }
+
+    /// Affiche une image en fonction de sa position cible et de son échelle de rendu.
+    ///
+    /// # Arguments
+    /// * `img_path` chemin vers l'image à afficher.
+    /// * `x` position en x de l'image à afficher.
+    /// * `y` position en y de l'image à afficher.
+    /// * `scale` échelle de rendu de l'image à afficher.
+    #[inline]
+    pub fn draw_scaled_image(&mut self, img_path: &str, x: i32, y: i32, scale: f64) {
+        assert!(scale >= 0f64, "The image scale can't be negative.");
+        let surface = self.resource_manager.new_img_surface(img_path).unwrap();
+        let dst_rect = Rect::new(x, y, (surface.width() as f64 * scale) as u32, (surface.height() as f64 * scale) as u32);
+        self.render_manager.draw_image(surface, None, dst_rect);
+    }
+
+    /// Affiche une portion de l'image dont le chemin est en paramètre.
+    ///
+    /// # Arguments
+    /// * `img_path` chemin vers l'image dont on veut afficher une portion.
+    /// * `x` position gauche sur la fenêtre de jeu de l'image qu'on veut afficher.
+    /// * `y` position en hauteur sur la fenêtre de jeu de l'image qu'on veut afficher.
+    /// * `scale` échelle de rendue de l'image sur la fenêtre de jeu.
+    /// * `target_img` cible la portion qu'on veut afficher sur l'image dont on a le chemin en paramètre.
+    #[inline]
+    pub fn draw_image_part(&mut self, img_path: &str, x: i32, y: i32, scale: f64, target_img: &crate::types::rect::Rect) {
+        assert!(scale >= 0f64, "The image scale can't be negative.");
+        let surface = self.resource_manager.new_img_surface(img_path).unwrap();
+        let dst_rect = Rect::new(x, y, (target_img.get_w() as f64 * scale) as u32, (target_img.get_h() as f64 * scale) as u32);
+        let src_rect = Rect::new(target_img.get_x(), target_img.get_y(), target_img.get_w(), target_img.get_h());
+        self.render_manager.draw_image(surface, Some(src_rect), dst_rect);
     }
 
     /// Change la couleur d'affichage globale pour celle en paramètre.

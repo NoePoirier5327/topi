@@ -24,7 +24,7 @@ pub use input::{InputManager, keycode};
 pub struct App {
     renderer: RenderContext,
     input: InputManager,
-    resource: Rc<ResourceManager>,
+    _resource: Rc<ResourceManager>,
     event_pump: EventPump,
     game_object: Box<dyn AppLogic>,
 }
@@ -63,12 +63,12 @@ impl App {
         // On active les couleurs transparentes.
         canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
 
-        let resource = Rc::new(ResourceManager::new(&canvas));
+        let resource = Rc::new(ResourceManager::new());
 
         Self {
             renderer: render::new_render_context(canvas, width, height, resource.clone()),
             input: input::new_input_manager(),
-            resource,
+            _resource: resource,
             event_pump: sdl_context.event_pump().expect("Failed to create sdl2 event pump."),
             game_object: Box::new(game_object),
         }

@@ -4,6 +4,7 @@ pub mod rectangle;
 pub mod line;
 pub mod circle;
 pub mod text;
+pub mod image;
 
 use sdl2::render::WindowCanvas;
 

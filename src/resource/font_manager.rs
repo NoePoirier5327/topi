@@ -58,11 +58,11 @@ impl FontManager {
 
         let font = ttf_context
             .load_font(font_path, font_size)
-            .map_err(ResourceError::FailedToLoad)?;
+            .map_err(ResourceError::LoadFont)?;
         let font = font
             .render(text)
             .blended(color)
-            .map_err(|e| ResourceError::FailedToCreateSurface(e.to_string()))?;
+            .map_err(|e| ResourceError::CreateSurface(e.to_string()))?;
 
         let font = Rc::new(font);
 

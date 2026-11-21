@@ -14,5 +14,5 @@ path = "src/lib.rs"
 crate-type = ["rlib"]
 
 [dependencies]
-sdl2 = { version = "0.38.0", features = ["ttf"] }
+sdl2 = { version = "0.38.0", features = ["ttf", "image"] }
 rand = "0.10.3"

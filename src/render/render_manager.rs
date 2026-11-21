@@ -5,7 +5,7 @@ mod renderable;
 use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, surface::Surface};
 use std::rc::Rc;
 use renderable::{Renderable, circle, line, rectangle};
-use crate::{render::render_manager::renderable::text, types};
+use crate::{render::render_manager::renderable::{image, text}, types};
 
 /// Interface vers l'affichage de la fenêtre de jeu courante.
 pub struct RenderManager {
@@ -170,6 +170,22 @@ impl RenderManager {
         self.renderable_items.push(
             Box::new(
                 text::Text::new(surface, &target_pos)
+            )
+        );
+    }
+
+    /// Affiche une image sur la fenêtre sdl2 sous-jacente à partir de sa future position simple.
+    ///
+    /// # Arguments
+    /// * `surface` référence vers la surface de l'image à afficher.
+    /// * `src_rect` cible sur la portion de l'image à afficher, None affiche toute l'image.
+    /// * `dst_rect` cible sur la position et la taille final de l'image sur la fenêtre de rendue sdl2.
+    pub fn draw_image(&mut self, surface: Rc<Surface<'static>>, src_rect: Option<Rect>, dst_rect: Rect) {
+        if !Self::rect_is_in_window(dst_rect.x, dst_rect.y, dst_rect.w as u32, dst_rect.h as u32, self.window_width, self.window_height) { return }
+
+        self .renderable_items.push(
+            Box::new(
+                image::Image::new(surface, src_rect, dst_rect)
             )
         );
     }
