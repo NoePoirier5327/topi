@@ -158,9 +158,8 @@ impl RenderContext {
     pub fn draw_image_part(&mut self, img_path: &str, x: i32, y: i32, scale: f64, target_img: &crate::types::rect::Rect) {
         assert!(scale >= 0f64, "The image scale can't be negative.");
         let surface = self.resource_manager.new_img_surface(img_path).unwrap();
-        let dst_rect = Rect::new(x, y, (target_img.get_w() as f64 * scale) as u32, (target_img.get_h() as f64 * scale) as u32);
-        let src_rect = Rect::new(target_img.get_x(), target_img.get_y(), target_img.get_w(), target_img.get_h());
-        self.render_manager.draw_image(surface, Some(src_rect), dst_rect);
+        let dst_rect = Rect::new(x, y, (target_img.width() as f64 * scale) as u32, (target_img.height() as f64 * scale) as u32);
+        self.render_manager.draw_image(surface, Some(*target_img), dst_rect);
     }
 
     /// Change la couleur d'affichage globale pour celle en paramètre.
