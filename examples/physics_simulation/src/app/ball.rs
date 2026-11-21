@@ -38,7 +38,7 @@ impl Ball {
                 0f64,
             ),
             radius,
-            color: Color::new_rgb(
+            color: Color::RGB(
                 rand::randrange(0f64, 255f64) as u8,
                 rand::randrange(0f64, 255f64) as u8,
                 rand::randrange(0f64, 255f64) as u8

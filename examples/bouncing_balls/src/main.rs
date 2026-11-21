@@ -76,7 +76,7 @@ impl BouncingBalls {
 
             // Couleur de la nouvelle balle.
             balls_color.push(
-                Color::new_rgb(
+                Color::RGB(
                     rand::randrange(0f64, 255f64) as u8,
                     rand::randrange(0f64, 255f64) as u8,
                     rand::randrange(0f64, 255f64) as u8

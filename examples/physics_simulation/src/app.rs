@@ -251,7 +251,7 @@ impl AppLogic for App {
         // On affiche la prochaine balle à tomber si on est en mode d'apparition de balle.
         if self.is_in_spawn_mode {
             let mut color = self.next_ball.get_color();
-            color.set_a(100);
+            color.a = 100;
             renderer.set_draw_color(&color);
             renderer.draw_circle(self.next_ball.pos.get_x() as i32, self.next_ball.pos.get_y() as i32, self.next_ball.get_radius());
         }
