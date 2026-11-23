@@ -1,6 +1,8 @@
 //! Contient des fonctions régissant l'aléatoire de topi.
 //! Ce ne sont que des wrappers sur des fonctions de la crate rand 0.10.3.
 
+use rand::distr::uniform::{SampleRange, SampleUniform};
+
 /// Renvoie un nombre aléatoire entre 0 et 1.
 ///
 /// # Return
@@ -9,14 +11,18 @@ pub fn random() -> f64 {
     rand::random()
 }
 
-/// Renvoie un f64 aléatoire entre les deux bornes inclus en paramètre.
+/// Renvoie un nombre aléatoire entre dans le range en paramètre.
 ///
-/// # Arguments
-/// * `lower_bound` borne inférieur du nombre aléatoire.
-/// * `upper_bound` borne supérieur du nombre aléatoire.
+/// # Argument
+/// * `range` bornes entre lesquelles le nombre aléatoire doit être généré.
 ///
 /// # Return
 /// Nombre aléatoire entre les bornes en paramètre.
-pub fn randrange(lower_bound: f64, upper_bound: f64) -> f64 {
-    rand::random_range(lower_bound..=upper_bound)
+#[inline]
+pub fn randrange<T, R>(range: R) -> T
+where 
+    T: SampleUniform,
+    R: SampleRange<T>
+{
+    rand::random_range(range)
 }
