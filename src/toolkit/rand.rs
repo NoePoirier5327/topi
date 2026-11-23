@@ -7,6 +7,7 @@ use rand::distr::uniform::{SampleRange, SampleUniform};
 ///
 /// # Return
 /// f64 aléatoire entre 0 et 1.
+#[inline]
 pub fn random() -> f64 {
     rand::random()
 }
