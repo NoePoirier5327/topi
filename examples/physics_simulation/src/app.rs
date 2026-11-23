@@ -34,7 +34,7 @@ impl App {
             gravity: 2000f64,
             next_ball: ball::Ball::new(
                 0f64, 0f64,
-                rand::randrange(MIN_BALL_SIZE, MAX_BALL_SIZE)
+                rand::randrange(MIN_BALL_SIZE..=MAX_BALL_SIZE)
             ),
             balls: Vec::new(),
             grabbed_ball: None,
@@ -53,7 +53,7 @@ impl App {
         self.next_ball = ball::Ball::new(
             new_pos.get_x(),
             new_pos.get_y(),
-            rand::randrange(MIN_BALL_SIZE, MAX_BALL_SIZE)
+            rand::randrange(MIN_BALL_SIZE..=MAX_BALL_SIZE)
         )
     }
 

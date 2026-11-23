@@ -34,14 +34,14 @@ impl Ball {
         Self {
             pos: Point2f::new(x, y),
             speed: Vector2D::new(
-                rand::randrange(MIN_INITIAL_HORIZONTAL_SPEED, MAX_INITIAL_HORIZONTAL_SPEED),
+                rand::randrange(MIN_INITIAL_HORIZONTAL_SPEED..=MAX_INITIAL_HORIZONTAL_SPEED),
                 0f64,
             ),
             radius,
             color: Color::RGB(
-                rand::randrange(0f64, 255f64) as u8,
-                rand::randrange(0f64, 255f64) as u8,
-                rand::randrange(0f64, 255f64) as u8
+                rand::randrange(0u8..=255u8),
+                rand::randrange(0u8..=255u8),
+                rand::randrange(0u8..=255u8)
             )
         }
     }

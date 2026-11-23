@@ -55,31 +55,31 @@ impl BouncingBalls {
         // On construit les listes contenant les valeurs des balles simulées par l'application.
         for _ in 0..nb_ball {
             // Rayon de la nouvelle balle.
-            let ball_radius = rand::randrange(min_ball_radius, max_ball_radius);
+            let ball_radius = rand::randrange(min_ball_radius..=max_ball_radius);
             balls_radius.push(ball_radius);
 
             // Vecteur vitesse de la nouvelle balle.
             balls_speed.push(
                 Vector2D::new(
-                    rand::randrange(min_ball_speed as f64, max_ball_speed as f64),
-                    rand::randrange(min_ball_speed as f64, max_ball_speed as f64)
+                    rand::randrange(min_ball_speed..=max_ball_speed) as f64,
+                    rand::randrange(min_ball_speed..=max_ball_speed) as f64
                 )
             );
 
             // Centre de la nouvelle balle.
             balls_position.push(
                 Point2f::new(
-                    rand::randrange(ball_radius, WINDOW_WIDTH as f64 - ball_radius),
-                    rand::randrange(ball_radius, WINDOW_HEIGHT as f64 - ball_radius)
+                    rand::randrange(ball_radius..=WINDOW_WIDTH as f64 - ball_radius),
+                    rand::randrange(ball_radius..=WINDOW_HEIGHT as f64 - ball_radius)
                 )
             );
 
             // Couleur de la nouvelle balle.
             balls_color.push(
                 Color::RGB(
-                    rand::randrange(0f64, 255f64) as u8,
-                    rand::randrange(0f64, 255f64) as u8,
-                    rand::randrange(0f64, 255f64) as u8
+                    rand::randrange(0u8..=255u8),
+                    rand::randrange(0u8..=255u8),
+                    rand::randrange(0u8..=255u8)
                 )
             );
         }
