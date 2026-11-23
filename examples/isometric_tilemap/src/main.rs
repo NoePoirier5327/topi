@@ -50,19 +50,19 @@ impl App {
 
 impl topi::AppLogic for App {
     fn update(&mut self, dt: f64, input: &topi::InputManager) {
-        if input.is_key_held(topi::keycode::KEY_Z) {
+        if input.is_key_held(topi::keycode::KEY_Z) || input.is_key_held(topi::keycode::KEY_UP) {
             self.camera_y += (self.camera_speed * dt) as i32;
         }
 
-        if input.is_key_held(topi::keycode::KEY_S) {
+        if input.is_key_held(topi::keycode::KEY_S) || input.is_key_held(topi::keycode::KEY_DOWN) {
             self.camera_y -= (self.camera_speed * dt) as i32;
         }
 
-        if input.is_key_held(topi::keycode::KEY_D) {
+        if input.is_key_held(topi::keycode::KEY_D) || input.is_key_held(topi::keycode::KEY_LEFT) {
             self.camera_x -= (self.camera_speed * dt) as i32;
         }
 
-        if input.is_key_held(topi::keycode::KEY_Q) {
+        if input.is_key_held(topi::keycode::KEY_Q) || input.is_key_held(topi::keycode::KEY_RIGHT) {
             self.camera_x += (self.camera_speed * dt) as i32;
         }
 
