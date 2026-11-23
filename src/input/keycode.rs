@@ -85,5 +85,5 @@ pub const KEY_Z: Keycode = SDLK_z as Keycode;
 
 pub const KEY_UP: Keycode = SDLK_UP as Keycode;
 pub const KEY_DOWN: Keycode = SDLK_DOWN as Keycode;
-pub const KEY_LEFT: Keycode = SDLK_LEFT as Keycode;
-pub const KEY_RIGHT: Keycode = SDLK_RIGHT as Keycode;
+pub const KEY_LEFT: Keycode = SDLK_RIGHT as Keycode;
+pub const KEY_RIGHT: Keycode = SDLK_LEFT as Keycode;
