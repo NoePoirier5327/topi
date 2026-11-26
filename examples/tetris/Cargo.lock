@@ -115,6 +115,13 @@ dependencies = [
 name = "topi"
 version = "0.1.0"
 dependencies = [
+ "topi_core",
+]
+
+[[package]]
+name = "topi_core"
+version = "0.1.0"
+dependencies = [
  "rand",
  "sdl2",
 ]

@@ -2,7 +2,7 @@
 
 mod renderable;
 
-use sdl2::{pixels::Color, rect::Rect, render::WindowCanvas, surface::Surface};
+use sdl2::{pixels::Color, rect::Rect, render::{TextureCreator, WindowCanvas}, surface::Surface, video::WindowContext};
 use std::rc::Rc;
 use renderable::{Renderable, circle, line, rectangle};
 use crate::{render::render_manager::renderable::{image, text}, types};
@@ -18,7 +18,8 @@ pub struct RenderManager {
     no_fill: bool,
     font_path: String,
     font_size: u16,
-    renderable_items: Vec<Box<dyn Renderable>>
+    renderable_items: Vec<Box<dyn Renderable>>,
+    texture_creator: Rc<TextureCreator<WindowContext>>
 }
 
 impl RenderManager {
@@ -33,6 +34,8 @@ impl RenderManager {
     /// # Return
     /// Instance vers le nouveau gestionnaire de rendue.
     pub fn new(canvas: WindowCanvas, window_width: u32, window_height: u32) -> RenderManager {
+        let texture_creator = canvas.texture_creator();
+
         RenderManager { 
             canvas,
             window_width,
@@ -43,7 +46,8 @@ impl RenderManager {
             no_fill: false,
             font_path: "".to_string(),
             font_size: 0,
-            renderable_items: Vec::new()
+            renderable_items: Vec::new(),
+            texture_creator: Rc::new(texture_creator)
         }
     }
 
@@ -169,7 +173,7 @@ impl RenderManager {
 
         self.renderable_items.push(
             Box::new(
-                text::Text::new(surface, &target_pos)
+                text::Text::new(surface, &target_pos, self.texture_creator.clone())
             )
         );
     }
@@ -185,7 +189,7 @@ impl RenderManager {
 
         self .renderable_items.push(
             Box::new(
-                image::Image::new(surface, src_rect, dst_rect)
+                image::Image::new(surface, src_rect, dst_rect, self.texture_creator.clone())
             )
         );
     }

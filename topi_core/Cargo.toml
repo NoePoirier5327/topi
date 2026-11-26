@@ -1,0 +1,14 @@
+[package]
+name = "topi_core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lib]
+name = "topi_core"
+path = "src/lib.rs"
+crate-type = ["rlib"]
+
+[dependencies]
+sdl2 = { version = "0.38.0", features = ["ttf", "image"] }
+rand = "0.10.3"

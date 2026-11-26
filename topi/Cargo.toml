@@ -1,0 +1,13 @@
+[package]
+name = "topi"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[features]
+default = []
+lua = ["dep:topi_lua"]
+
+[dependencies]
+topi_core = { path = "../topi_core/" }
+topi_lua = { path = "../topi_lua/", optional = true }

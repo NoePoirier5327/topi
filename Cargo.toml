@@ -1,18 +1,23 @@
-[package]
-name = "topi"
+[workspace]
+members = [
+  "topi_core",
+  "topi_lua",
+  "topi"
+]
+resolver = "2"
+exclude = [
+  "examples/bouncing_balls",
+  "examples/isometric_tilemap",
+  "examples/physics_simulation",
+  "examples/tetris"
+]
+
+[workspace.package]
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+authors = ["Noé Poirier"]
 
 [profile.release]
 opt-level = 3
 lto = true
 codegen-units = 1
-
-[lib]
-name = "topi"
-path = "src/lib.rs"
-crate-type = ["rlib"]
-
-[dependencies]
-sdl2 = { version = "0.38.0", features = ["ttf", "image"] }
-rand = "0.10.3"
