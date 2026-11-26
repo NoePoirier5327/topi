@@ -109,6 +109,21 @@ impl InputManager {
         self.current_state[scancode as usize] != 0 && self.previous_state[scancode as usize] == 0
     }
 
+    /// Vérifie si une touche du clavier (n'importe laquelle) est maintenue par l'utilisateur.
+    #[inline]
+    pub fn is_any_key_held(&self) -> bool {
+        self.current_state.iter().any(|&state| state != 0)
+    }
+
+    /// Vérifie si une touche du clavier (n'importe laquelle) est pressée par l'utilisateur.
+    #[inline]
+    pub fn is_any_key_pressed(&self) -> bool {
+        self.current_state
+            .iter()
+            .zip(self.previous_state.iter())
+            .any(|(&current, &previous)| current != 0 && previous == 0)
+    }
+
     /// Renvoie la dernière entrée clavier du gestionnaire d'entrées sous forme de caractère
     /// imprimable.
     #[inline]
