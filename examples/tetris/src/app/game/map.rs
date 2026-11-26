@@ -78,30 +78,6 @@ impl Map {
         index
     }
 
-    /// Renvoie, sous forme de tableau, les indexs des lignes pleines à détruire.
-    pub fn get_full_lines_index(&self) -> Vec<usize> {
-        let mut indexs = Vec::new();
-
-        for line in 0..MAP_HEIGHT {
-            let mut line_is_full = true;
-            for column in 0..MAP_WIDTH {
-                line_is_full &= self.get(column, line).is_some();
-            }
-
-            if line_is_full {
-                indexs.push(line);
-            }
-        }
-
-        indexs
-    }
-
-    /// Renvoie le nombre de lignes pleines dans la grille courante.
-    #[inline]
-    pub fn get_nb_full_lines(&self) -> usize {
-        self.get_full_lines_index().len()
-    }
-
     /// Détruis la ligne en paramètre, la ligne est accessible par son index, son index doit être
     /// dans la carte sinon une erreur est levée.
     pub fn destroy_line(&mut self, line: usize) {
