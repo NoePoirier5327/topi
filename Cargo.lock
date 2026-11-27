@@ -361,6 +361,7 @@ name = "topi_lua"
 version = "0.1.0"
 dependencies = [
  "mlua",
+ "topi_core",
 ]
 
 [[package]]

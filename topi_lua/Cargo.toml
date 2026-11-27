@@ -4,5 +4,11 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 
+[lib]
+package = "topi_lua"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
 [dependencies]
 mlua = { version = "0.12.2", features = ["lua54", "module"] }
+topi_core = { path = "../topi_core/" }
