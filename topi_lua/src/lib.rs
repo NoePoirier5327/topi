@@ -1,5 +1,6 @@
 mod input;
 mod render;
+mod types;
 
 use input::LuaInputManager;
 use render::LuaRenderContext;
@@ -15,6 +16,8 @@ fn topi(lua: &Lua) -> LuaResult<LuaTable> {
 
     // Tables contenants les points d'accès vers les composantes de topi.
     let app_export = lua.create_table()?;
+    let types_export = lua.create_table()?;
+    let color_export = lua.create_table()?;
 
     app_export.set(
         "new",
@@ -25,8 +28,18 @@ fn topi(lua: &Lua) -> LuaResult<LuaTable> {
         })?
     )?;
 
+    color_export.set(
+        "new",
+        lua.create_function(|_, (r, g, b, a): (u8, u8, u8, Option<u8>)| {
+            Ok(types::color::LuaColor::new(r, g, b, a.unwrap_or(255)))
+        })?
+    )?;
+
     // Accès dans l'export global.
+    types_export.set("Color", color_export)?;
+
     exports.set("App", app_export)?;
+    exports.set("types", types_export)?;
 
     // Renvoie de l'export lua.
     Ok(exports)
